@@ -64,6 +64,11 @@
   -webkit-transform: scale(1.2);
       -ms-transform: scale(1.2);
           transform: scale(1.2);
+  cursor: pointer;
+}
+
+.slides-container .pointer + .pointer {
+  margin-left: 10px;
 }
 .slides-container .pointer.active {
   background: rgba(255,255,255,.9);

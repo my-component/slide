@@ -23,6 +23,7 @@
     this.current;
     this.interval;
     this.option = $.extend({
+      height: 'auto',
       interval: 3000,
       'animation-duration': 500
     }, option);
@@ -35,10 +36,21 @@
       this.$slides = this.$container.find('.slides li');
       this.len = this.$slides.length;
       this.$slides.css('animation-duration', this.option['animation-duration'] + 'ms');
+      this.setHeight();
       this.insertPointer();
       this.eventBind();
       this.toSlide(0);
       this.start();
+    },
+    setHeight: function() {
+      var height = this.option.height;
+      if (height === 'auto') {
+        height = 0;
+        this.$slides.each(function() {
+          height = Math.max(height, $(this).height());
+        });
+      }
+      this.$container.css('height', height);
     },
     insertPointer: function() {
       var html = '<ul class="pointers">';
