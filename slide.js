@@ -36,11 +36,12 @@
       this.$slides = this.$container.find('.slides li');
       this.len = this.$slides.length;
       this.$slides.css('animation-duration', this.option['animation-duration'] + 'ms');
-      this.setHeight();
+      $(window).on('load resize', $.proxy(this.setHeight, this));
       this.insertPointer();
       this.eventBind();
       this.toSlide(0);
-      this.start();
+      this.toPointer(0);
+      this.startCycle();
     },
     setHeight: function() {
       var height = this.option.height;
@@ -53,8 +54,8 @@
       this.$container.css('height', height);
     },
     insertPointer: function() {
-      var html = '<ul class="pointers">';
       var len = this.len;
+      var html = '<ul class="pointers" style="margin-left:' + -(2 * len - 1) * 5 + 'px">';
       for (var i = 0; i < len; i++) {
         html += '<li class="pointer" data-index="' + i + '"></li>'
       }
@@ -62,11 +63,11 @@
       this.$pointers = $(html).appendTo(this.$container);
       this.$pointerList = this.$pointers.find('li');
     },
-    start: function() {
-      this.stop();
+    startCycle: function() {
+      this.stopCycle();
       this.interval = setInterval($.proxy(this.next, this), this.option.interval);
     },
-    stop: function() {
+    stopCycle: function() {
       this.interval && clearInterval(this.interval);
     },
     next: function() {
@@ -99,10 +100,12 @@
     },
     eventBind: function() {
       var self = this;
-      self.$container.on('mouseover', $.proxy(self.stop, self));
-      self.$container.on('mouseout', $.proxy(self.start, self))
+      self.$container.on('mouseenter', $.proxy(self.stopCycle, self));
+      self.$container.on('mouseout', $.proxy(self.startCycle, self))
       self.$pointers.on('click.slide.pointer', '.pointer', function() {
-        self.toSlide.call(self, $(this).data('index'))
+        var index = $(this).data('index');
+        self.toSlide.call(self, index);
+        self.toPointer.call(self, index);
       });
     }
   });
